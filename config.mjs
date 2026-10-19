@@ -78,7 +78,7 @@ async function callLLM(system, prompt, schema, model = MODEL) {
 
 // Make all of this available to the workflow files: `import { ... } from "./config.mjs"`.
 export {
-  client, // the agent (single_agent.mjs) runs its own loop, so it needs the client directly
+  client, // the agent (reAct_single_agent.mjs) and the chatbot (chatbot.mjs) run their own loops, so they need the client directly
   MIN_CAREERS,
   MAX_CAREERS,
   STEP1_SCHEMA,
