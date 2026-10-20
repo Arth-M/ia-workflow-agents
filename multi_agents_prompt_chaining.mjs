@@ -1,4 +1,9 @@
-// can also be called sequential multi agents, waterfall, pipeline, linear delegation etc
+// all those systems are usually put along one another and mixed to fit the
+// needs you have
+// multi agent prompt chaining can also be called sequential multi agents, waterfall, pipeline, linear delegation etc
+
+// temperature low (0.1), top-p high (between 0.9 and 1.0), and top-k to make it as close as possible to deterministic
+// but these are not available in newer models in claude
 
 //  in multi agents system, the orchestrator is always a workflow : plain code that runs the agents in a
 // FIXED ORDER, with GATES (safeguards) between agents calls. Agents never choose who goes next and under
@@ -34,3 +39,17 @@
 
 // evaluator-optimizer mutli agent system also known as reflection, self-refine or critic :
 // need a stop condition : STOP CONDITION tangible and deterministic here is very very important
+
+// not to use : peer-to-peer multi agent system or any to any (P2P or A2A)
+// no hierarchy, agents communicate directly with each other, no direct workflow
+// equivalent as it is chaos. Every agent needs awareness of other agent, info pass
+// back and forth between agents until a stop condition is reached.
+//  hardest of all systems to debug
+
+
+// metrics : pass@k: cumulative coverage : measures raw, k-attempt reliability,
+//  pass^k: consistency between k trials
+
+// ALWAYS add a reflexion step to help self-improvement with KPIs, tests, quantitative
+// measures as possible
+// typescript is a great language to work with agents, go and python too

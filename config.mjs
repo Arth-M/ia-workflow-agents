@@ -9,6 +9,9 @@
 // 2. Put your key in .env:  ANTHROPIC_API_KEY=sk-ant-...   (never in this file)
 // 3. Run a workflow with:   node --env-file=.env <workflow file>.mjs
 //    The SDK reads ANTHROPIC_API_KEY from the environment automatically.
+
+// there is the CLIENT SDK and the AGENT SDK at anthropic,
+// to call claude API (model) or embed claude code's agent directly in your typescript/python app
 import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic();
 const MODEL = `claude-sonnet-5-5`; // default model for every call that doesn't name one
@@ -55,9 +58,12 @@ async function callLLM(system, prompt, schema, model = MODEL) {
     .stream({
       model: model,
       max_tokens: 64000,
-      system: system,                                            // the role/rules for this step
-      messages: [{ role: `user`, content: prompt }],             // the actual input for this step
-      output_config: { effort: `medium`, format: { type: `json_schema`, schema } }, // STRUCTURED OUTPUT: force this JSON shape
+      system: system, // the role/rules for this step
+      messages: [{ role: `user`, content: prompt }], // the actual input for this step
+      output_config: {
+        effort: `medium`,
+        format: { type: `json_schema`, schema },
+      }, // STRUCTURED OUTPUT: force this JSON shape
       // If the model's safety filter declines the request, the API retries it
       // on another model by itself instead of failing (that's why we use `client.beta`).
       // Haiku has no such fallback, so we only add it for the other models.
@@ -66,14 +72,17 @@ async function callLLM(system, prompt, schema, model = MODEL) {
         fallbacks: `default`,
       }),
     })
-    .finalMessage();                                             // wait for the full answer
+    .finalMessage(); // wait for the full answer
 
   // The schema is only guaranteed when the answer finished normally:
   // `max_tokens` = cut off mid-JSON, `refusal` = declined. Stop the workflow in both cases.
   if (response.stop_reason !== `end_turn`) {
     throw new Error(`LLM call stopped early: ${response.stop_reason}`);
   }
-  return response.content.filter((b) => b.type === `text`).map((b) => b.text).join(``);
+  return response.content
+    .filter((b) => b.type === `text`)
+    .map((b) => b.text)
+    .join(``);
 }
 
 // Make all of this available to the workflow files: `import { ... } from "./config.mjs"`.
